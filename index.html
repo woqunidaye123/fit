@@ -3,61 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>91男神塑形手册</title>
+    <title>82kg 硬核塑形系统</title>
     <style>
         :root { --bg:#000; --card:#1c1c1e; --green:#32d74b; --blue:#0a84ff; --text:#fff; --dim:#8e8e93; }
-        body { font-family:-apple-system; background:var(--bg); color:var(--text); padding:20px; margin:0; -webkit-user-select:none; }
-        .card { background:var(--card); border-radius:14px; padding:16px; margin-bottom:15px; }
-        h2 { color:var(--blue); font-size:0.9rem; margin-top:0; border-bottom:0.5px solid #333; padding-bottom:8px; display:flex; justify-content:space-between; }
-        .item { display:flex; align-items:center; padding:12px 0; border-bottom:0.5px solid #2c2c2e; }
-        .check { width:22px; height:22px; border:2px solid #555; border-radius:50%; margin-right:12px; flex-shrink:0; }
+        body { font-family:-apple-system; background:var(--bg); color:var(--text); padding:15px; margin:0; }
+        .card { background:var(--card); border-radius:12px; padding:15px; margin-bottom:15px; }
+        h2 { color:var(--blue); font-size:0.95rem; margin-top:0; border-bottom:0.5px solid #333; padding-bottom:8px; display:flex; justify-content:space-between; }
+        .item { display:flex; align-items:flex-start; padding:12px 0; border-bottom:0.5px solid #2c2c2e; }
+        .item:last-child { border:none; padding-bottom:0; }
+        .check { width:20px; height:20px; border:2px solid #555; border-radius:50%; margin-right:12px; margin-top:2px; flex-shrink:0; }
         .done .check { background:var(--green); border-color:var(--green); position:relative; }
-        .done .check::after { content:'✓'; color:#000; position:absolute; left:4px; top:-1px; font-weight:bold; }
+        .done .check::after { content:'✓'; color:#000; position:absolute; left:3px; top:-2px; font-weight:bold; }
         .info { flex:1; }
-        .n { font-size:1rem; font-weight:600; }
-        .d { font-size:0.75rem; color:var(--dim); margin-top:3px; }
-        .progress-box { margin-bottom:20px; text-align:center; }
-        .progress { height:8px; background:#333; border-radius:4px; overflow:hidden; margin:10px 0; }
-        #fill { height:100%; background:linear-gradient(90deg, var(--blue), var(--green)); width:0; transition:0.5s; }
-        .btn-group { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
-        .btn { padding:12px; border:1px solid var(--blue); border-radius:10px; color:var(--blue); background:none; font-weight:600; }
+        .n { font-size:1rem; font-weight:600; line-height:1.2; }
+        .d { font-size:0.75rem; color:var(--dim); margin-top:4px; line-height:1.3; }
+        .progress-box { margin-bottom:15px; text-align:center; }
+        .progress { height:6px; background:#333; border-radius:3px; overflow:hidden; margin:8px 0; }
+        #fill { height:100%; background:var(--green); width:0; transition:0.3s; }
+        .btn-group { display:flex; gap:10px; margin-bottom:15px; }
+        .btn { flex:1; padding:10px; border:1px solid var(--blue); border-radius:8px; color:var(--blue); background:none; font-weight:bold; font-size:0.9rem;}
         .active { background:var(--blue); color:#fff; }
     </style>
 </head>
 <body>
 
 <div class="progress-box">
-    <h1 style="font-size:1.3rem; margin:10px 0;">塑形精锐计划 PRO</h1>
-    <div id="stat" style="font-size:0.8rem; color:#aaa;">近7天进度统计中...</div>
+    <h1 style="font-size:1.2rem; margin:5px 0;">高强度减脂增肌系统</h1>
+    <div id="stat" style="font-size:0.75rem; color:#aaa;">加载中...</div>
     <div class="progress"><div id="fill"></div></div>
 </div>
 
 <div class="btn-group">
-    <button class="btn active" id="btnA" onclick="setPlan('A')">A 下肢 & 下腹</button>
-    <button class="btn" id="btnB" onclick="setPlan('B')">B 上肢 & 侧腹</button>
+    <button class="btn active" id="btnA" onclick="setPlan('A')">A: 下肢强化</button>
+    <button class="btn" id="btnB" onclick="setPlan('B')">B: 上肢增厚</button>
 </div>
 
-<div class="card"><h2>第一步：激活 (解决腹大)</h2><div id="w"></div></div>
-<div class="card"><h2>第二步：力量 (保住四肢)</h2><div id="s"></div></div>
-<div class="card"><h2>第三步：燃脂 (内脏脂肪)</h2><div id="h"></div></div>
+<div class="card"><h2>一、体态纠正 (全勤)</h2><div id="w"></div></div>
+<div class="card"><h2>二、硬核力量 (力竭)</h2><div id="s"></div></div>
+<div class="card"><h2>三、内脏脂肪摧毁</h2><div id="h"></div></div>
+
+<p style="text-align:center; color:#444; font-size:0.7rem; margin-top:20px;" onclick="if(confirm('重置今日所有打卡？')){localStorage.clear();location.reload();}">清理今日数据</p>
 
 <script>
-let plan = localStorage.getItem('last_plan') || 'A';
+let plan = localStorage.getItem('hc_plan') || 'A';
+
 const W = [
-    {n:"真空腹 (3组)", d:"空腹/练前必做：收缩腹部，缩小腰围"},
-    {n:"死虫式 (12次)", d:"矫正骨盆前倾：背部贴地，收紧核心"}
+    {n:"真空腹 (3组x30秒)", d:"极力排空空气，肚脐贴近脊椎。缩小腰围核心动作。"},
+    {n:"死虫式 (4组x12次)", d:"下背部死死压住地面。对抗骨盆前倾。"},
+    {n:"侧卧贝壳/髂腰肌拉伸", d:"激活臀部，拉开紧绷的髋部前端。"}
 ];
+
 const A = [
-    {n:"负重分腿蹲", d:"3x10次：手拎重物，保住四肢肌肉量"},
-    {n:"仰卧举腿 (15次)", d:"针对下腹：消灭小肚腩的核心动作"}
+    {n:"负重保加利亚分腿蹲", d:"4组x10次(每侧)。必须背负重物！撕裂腿部肌肉。"},
+    {n:"背包罗马尼亚硬拉", d:"4组x12次。感受大腿后侧拉伸，拉高基础代谢。"},
+    {n:"靠墙静蹲 (3组x60秒)", d:"对抗到大腿发抖，不要提早站起。"},
+    {n:"仰卧举腿 (4组x15次)", d:"慢放！利用下腹控制腿部重量，不借力。"}
 ];
+
 const B = [
-    {n:"俯卧撑 (力竭)", d:"4组：撑起肩膀，视觉上腰更细"},
-    {n:"侧支撑 (45秒)", d:"收紧侧腹：勒紧你的天然腹带"}
+    {n:"宽/窄距俯卧撑", d:"4组 x 做到力竭起不来。撑大胸廓。"},
+    {n:"负重俯身划船", d:"4组x12次。提拉重物到小腹，增厚背阔肌。"},
+    {n:"Y-T-W 肌肉收缩", d:"3组x10遍。解决圆肩，让身姿挺拔拔高。"},
+    {n:"侧支撑 (4组x45秒)", d:"每侧坚持。强化腹斜肌，收紧侧腰围度。"}
 ];
+
 const H = [
-    {n:"登山者 (45秒)", d:"HIIT：针对性燃烧内脏脂肪"}
+    {n:"高强度壶铃/重物摇摆", d:"4组x30次。用臀部爆发力往前顶，纯粹的代谢炸弹。"},
+    {n:"登山者 (4组x45秒)", d:"组间休息仅15秒。极速榨干最后一点体力。"}
 ];
 
 function today() { return new Date().toISOString().slice(0,10); }
@@ -65,26 +77,28 @@ function today() { return new Date().toISOString().slice(0,10); }
 function render() {
     const draw = (id, data) => {
         document.getElementById(id).innerHTML = data.map(i => {
-            let key = today() + "_" + i.n;
+            let key = "hc_" + today() + "_" + i.n;
             let done = localStorage.getItem(key) == '1';
-            return `<div class="item ${done?'done':''}" onclick="toggle('${i.n}')"><div class="check"></div><div class="info"><div class="n">${i.n}</div><div class="d">${i.d}</div></div></div>`;
+            return `<div class="item ${done?'done':''}" onclick="toggle('${i.n}')">
+                <div class="check"></div><div class="info"><div class="n">${i.n}</div><div class="d">${i.d}</div></div>
+            </div>`;
         }).join('');
     };
     draw('w', W); draw('s', plan === 'A' ? A : B); draw('h', H);
     
     let currentTasks = [...W, ...(plan === 'A' ? A : B), ...H];
-    let done = currentTasks.filter(i => localStorage.getItem(today() + "_" + i.n) == '1').length;
+    let done = currentTasks.filter(i => localStorage.getItem("hc_" + today() + "_" + i.n) == '1').length;
     document.getElementById('fill').style.width = (done/currentTasks.length*100) + '%';
     
-    if(done === currentTasks.length && !localStorage.getItem("comp_" + today())) {
-        localStorage.setItem("comp_" + today(), "1");
-        alert("🎉 今日达成！");
+    if(done === currentTasks.length && !localStorage.getItem("hc_comp_" + today())) {
+        localStorage.setItem("hc_comp_" + today(), "1");
+        alert("今日硬核训练完成！优质蛋白补充起来！");
     }
     updateStat();
 }
 
 function toggle(n) {
-    let key = today() + "_" + n;
+    let key = "hc_" + today() + "_" + n;
     localStorage.getItem(key) ? localStorage.removeItem(key) : localStorage.setItem(key, "1");
     render();
 }
@@ -93,13 +107,13 @@ function updateStat() {
     let count = 0;
     for(let i=0; i<7; i++) {
         let d = new Date(); d.setDate(d.getDate() - i);
-        if(localStorage.getItem("comp_" + d.toISOString().slice(0,10))) count++;
+        if(localStorage.getItem("hc_comp_" + d.toISOString().slice(0,10))) count++;
     }
-    document.getElementById("stat").innerText = "🔥 过去7天完成：" + count + " 天";
+    document.getElementById("stat").innerText = "过去 7 天已完成 " + count + " 次高强度训练";
 }
 
 function setPlan(p) {
-    plan = p; localStorage.setItem('last_plan', p);
+    plan = p; localStorage.setItem('hc_plan', p);
     document.getElementById('btnA').className = p === 'A' ? 'btn active' : 'btn';
     document.getElementById('btnB').className = p === 'B' ? 'btn active' : 'btn';
     render();
