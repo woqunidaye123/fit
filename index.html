@@ -1,125 +1,310 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>82kg 硬核塑形系统</title>
-    <style>
-        :root { --bg:#000; --card:#1c1c1e; --green:#32d74b; --blue:#0a84ff; --text:#fff; --dim:#8e8e93; }
-        body { font-family:-apple-system; background:var(--bg); color:var(--text); padding:15px; margin:0; }
-        .card { background:var(--card); border-radius:12px; padding:15px; margin-bottom:15px; }
-        h2 { color:var(--blue); font-size:0.95rem; margin-top:0; border-bottom:0.5px solid #333; padding-bottom:8px; display:flex; justify-content:space-between; }
-        .item { display:flex; align-items:flex-start; padding:12px 0; border-bottom:0.5px solid #2c2c2e; }
-        .item:last-child { border:none; padding-bottom:0; }
-        .check { width:20px; height:20px; border:2px solid #555; border-radius:50%; margin-right:12px; margin-top:2px; flex-shrink:0; }
-        .done .check { background:var(--green); border-color:var(--green); position:relative; }
-        .done .check::after { content:'✓'; color:#000; position:absolute; left:3px; top:-2px; font-weight:bold; }
-        .info { flex:1; }
-        .n { font-size:1rem; font-weight:600; line-height:1.2; }
-        .d { font-size:0.75rem; color:var(--dim); margin-top:4px; line-height:1.3; }
-        .progress-box { margin-bottom:15px; text-align:center; }
-        .progress { height:6px; background:#333; border-radius:3px; overflow:hidden; margin:8px 0; }
-        #fill { height:100%; background:var(--green); width:0; transition:0.3s; }
-        .btn-group { display:flex; gap:10px; margin-bottom:15px; }
-        .btn { flex:1; padding:10px; border:1px solid var(--blue); border-radius:8px; color:var(--blue); background:none; font-weight:bold; font-size:0.9rem;}
-        .active { background:var(--blue); color:#fff; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>居家核心重塑</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050816; --bg-card: #020617;
+      --text: #e5e7eb; --subtext: #9ca3af;
+      --accent: #facc15; --accent-soft: rgba(250, 204, 21, 0.12);
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0; padding: 16px 16px 40px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #050816 40%, #000 100%);
+      color: var(--text);
+    }
+    .app { max-width: 540px; margin: 0 auto; }
+    header { margin-bottom: 16px; }
+    .title-block h1 { font-size: 20px; margin: 8px 0 4px; color: #fff; }
+    .title-block p { margin: 0; font-size: 12px; color: var(--subtext); }
+    .pill {
+      padding: 4px 10px; border-radius: 999px; background: var(--accent-soft);
+      color: var(--accent); font-size: 11px; display: inline-flex; align-items: center; gap: 4px; font-weight: bold;
+    }
+    .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    
+    .nav-tabs {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-top: 14px;
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      flex: 0 0 auto; font-size: 12px; padding: 6px 14px; border-radius: 999px;
+      border: 1px solid var(--border); background: rgba(15, 23, 42, 0.9);
+      color: var(--subtext); white-space: nowrap; font-weight: 500; transition: 0.2s;
+    }
+    .nav-tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    
+    .section { margin-top: 18px; display: none; animation: fadeIn 0.3s ease; }
+    .section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .section-title { font-size: 15px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .card {
+      background: rgba(15, 23, 42, 0.6); border-radius: 16px; padding: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border: 1px solid var(--border); backdrop-filter: blur(10px);
+    }
+    
+    .day-list { display: flex; flex-direction: column; gap: 10px; }
+    .day-item { padding: 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05); }
+    .day-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .day-sub { font-size: 11px; color: var(--subtext); line-height: 1.4; }
+    .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
+    
+    .task-list { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+    .task { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; padding: 6px 0; border-bottom: 1px dashed #1f2937; }
+    .task:last-child { border-bottom: none; }
+    .task input[type="checkbox"] {
+      width: 18px; height: 18px; border-radius: 4px; accent-color: var(--accent); margin-top: 2px; flex-shrink: 0;
+    }
+    .task-info { flex: 1; }
+    .task-name { font-weight: 500; display: block; margin-bottom: 3px;}
+    .task-desc { font-size: 11px; color: var(--subtext); line-height: 1.3; }
+    
+    .tracker-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+    .tracker-inputs input {
+      width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border);
+      background: #020617; color: var(--text); font-size: 12px; outline: none;
+    }
+    .btn { padding: 10px; border-radius: 8px; border: none; font-size: 13px; font-weight: bold; background: var(--accent); color: #000; width: 100%; margin-bottom: 10px; }
+    .records { max-height: 150px; overflow-y: auto; font-size: 11px; color: var(--subtext); }
+    .record-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1f2937; }
+    canvas { width: 100%; height: 180px; background: #020617; border-radius: 10px; margin-top: 10px; border: 1px solid var(--border); }
+    
+    .week-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; }
+    .week-card { border-radius: 10px; padding: 10px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+    .week-card-title { font-weight: bold; margin-bottom: 6px; font-size: 12px; color: var(--accent); }
+    .week-card div { margin-bottom: 3px; color: var(--subtext); }
+  </style>
 </head>
 <body>
+  <div class="app">
+    <header>
+      <div class="title-block">
+        <div class="pill"><span class="pill-dot"></span>居家全能版 · 12 周重塑</div>
+        <h1>铁兵 · 82kg➔75kg 减脂增肌</h1>
+        <p>核心策略：壶铃/弹力带保肌肉 + HIIT 撕裂内脏脂肪</p>
+      </div>
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-target="sec-week">训练课表</button>
+        <button class="nav-tab" data-target="sec-strength">力量打卡</button>
+        <button class="nav-tab" data-target="sec-track">数据趋势</button>
+        <button class="nav-tab" data-target="sec-weeks12">总览</button>
+      </div>
+    </header>
 
-<div class="progress-box">
-    <h1 style="font-size:1.2rem; margin:5px 0;">高强度减脂增肌系统</h1>
-    <div id="stat" style="font-size:0.75rem; color:#aaa;">加载中...</div>
-    <div class="progress"><div id="fill"></div></div>
-</div>
+    <section id="sec-week" class="section active">
+      <div class="section-title">📅 每周固定节奏 (代谢拉满)</div>
+      <div class="card">
+        <div class="day-list">
+          <div class="day-item"><div class="day-title"><span>周一 · 力量 A + 腹部</span><span class="tag">下肢超载</span></div><div class="day-sub">壶铃深蹲/硬拉 + 举腿，迫使身体分泌睾酮。</div></div>
+          <div class="day-item"><div class="day-title"><span>周二 · 空腹有氧</span><span class="tag">刷脂</span></div><div class="day-sub">早起空腹爬楼梯/快走 30分钟，心率 130 左右。</div></div>
+          <div class="day-item"><div class="day-title"><span>周三 · 力量 B + 侧腹</span><span class="tag">上肢扩容</span></div><div class="day-sub">利用弹力带和自重，背部拉宽，胸部撑起。</div></div>
+          <div class="day-item"><div class="day-title"><span>周四 · 休息/拉伸</span><span class="tag">恢复</span></div><div class="day-sub">严禁熬夜。肌肉是在休息时生长的。</div></div>
+          <div class="day-item"><div class="day-title"><span>周五 · 力量 A (重复)</span><span class="tag">下肢强化</span></div><div class="day-sub">四肢细必须一周练两次腿，壶铃重量加满！</div></div>
+          <div class="day-item"><div class="day-title"><span>周六 · 力量 B (重复)</span><span class="tag">上肢强化</span></div><div class="day-sub">胸背二次刺激，保持肌肉充血感。</div></div>
+          <div class="day-item"><div class="day-title"><span>周日 · HIIT 极限冲刺</span><span class="tag">内脏杀手</span></div><div class="day-sub">20分钟壶铃摇摆/波比跳，制造24小时持续燃脂缺口。</div></div>
+        </div>
+      </div>
+    </section>
 
-<div class="btn-group">
-    <button class="btn active" id="btnA" onclick="setPlan('A')">A: 下肢强化</button>
-    <button class="btn" id="btnB" onclick="setPlan('B')">B: 上肢增厚</button>
-</div>
+    <section id="sec-strength" class="section">
+      <div class="section-title">🏋️ 每日打卡 (做到力竭为止)</div>
+      <div class="card">
+        <div class="section-title" style="margin-top:0;font-size:14px;color:var(--accent);">
+          每日必做：深层核心激活
+        </div>
+        <div class="task-list">
+          <label class="task"><input type="checkbox" data-key="core_vacuum" /><div class="task-info"><span class="task-name">真空腹训练 3组x30秒</span><span class="task-desc">空腹把肚脐死死贴向脊柱。专门对付“腹部前突”。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="core_deadbug" /><div class="task-info"><span class="task-name">死虫式 3组x12次</span><span class="task-desc">腰椎死死压住地面，改善骨盆前倾。搭配弹力带增加阻力更佳。</span></div></label>
+        </div>
+        
+        <hr style="border-color:#1f2937; margin:15px 0;">
 
-<div class="card"><h2>一、体态纠正 (全勤)</h2><div id="w"></div></div>
-<div class="card"><h2>二、硬核力量 (力竭)</h2><div id="s"></div></div>
-<div class="card"><h2>三、内脏脂肪摧毁</h2><div id="h"></div></div>
+        <div class="section-title" style="margin-top:0;font-size:14px;color:#38bdf8;">
+          A 计划：下肢超载与下腹 (居家环境循环 4 轮)
+        </div>
+        <div class="task-list">
+          <label class="task"><input type="checkbox" data-key="A_bulgarian" /><div class="task-info"><span class="task-name">壶铃保加利亚分腿蹲 (每侧10次)</span><span class="task-desc">双手提壶铃或重物。后脚搭沙发，前脚主导发力。保大腿肌肉神作。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="A_rdl" /><div class="task-info"><span class="task-name">壶铃/弹力带罗马尼亚硬拉 (12次)</span><span class="task-desc">双脚踩住弹力带或双手持壶铃，臀部拼命后撅，感受大腿后侧强烈拉伸。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="A_wall" /><div class="task-info"><span class="task-name">靠墙静蹲 (60秒)</span><span class="task-desc">对抗到双腿发抖。大腿可以绑一根弹力圈对抗膝盖内扣。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="A_legraise" /><div class="task-info"><span class="task-name">仰卧举腿 (15次)</span><span class="task-desc">慢下！利用下腹部力量抗衡重力，消灭下腹凸出。</span></div></label>
+        </div>
 
-<p style="text-align:center; color:#444; font-size:0.7rem; margin-top:20px;" onclick="if(confirm('重置今日所有打卡？')){localStorage.clear();location.reload();}">清理今日数据</p>
+        <hr style="border-color:#1f2937; margin:15px 0;">
 
-<script>
-let plan = localStorage.getItem('hc_plan') || 'A';
+        <div class="section-title" style="margin-top:0;font-size:14px;color:#f43f5e;">
+          B 计划：上肢扩充与侧腰 (居家环境循环 4 轮)
+        </div>
+        <div class="task-list">
+          <label class="task"><input type="checkbox" data-key="B_pushup" /><div class="task-info"><span class="task-name">宽/窄距俯卧撑交替 (力竭)</span><span class="task-desc">觉得简单可以把弹力带绕在后背增加阻力。撑大胸廓。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="B_row" /><div class="task-info"><span class="task-name">单臂壶铃/弹力带划船 (每侧12次)</span><span class="task-desc">单手提拉壶铃，或坐姿向后拉扯弹力带。背阔肌发力，增厚背部。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="B_ytw" /><div class="task-info"><span class="task-name">Y-T-W 肌肉收缩 (10遍)</span><span class="task-desc">俯卧，徒手或手持两瓶矿泉水挤压背部。矫正圆肩，身姿挺拔显腰细。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="B_sideplank" /><div class="task-info"><span class="task-name">侧支撑 Side Plank (每侧45秒)</span><span class="task-desc">像紧身衣一样勒紧腹斜肌，强制收缩侧腰围度。</span></div></label>
+        </div>
+      </div>
+    </section>
 
-const W = [
-    {n:"真空腹 (3组x30秒)", d:"极力排空空气，肚脐贴近脊椎。缩小腰围核心动作。"},
-    {n:"死虫式 (4组x12次)", d:"下背部死死压住地面。对抗骨盆前倾。"},
-    {n:"侧卧贝壳/髂腰肌拉伸", d:"激活臀部，拉开紧绷的髋部前端。"}
-];
+    <section id="sec-track" class="section">
+      <div class="section-title">📊 战绩图表 (数据存在本地)</div>
+      <div class="card">
+        <div class="tracker-inputs">
+          <input id="in-date" type="date" />
+          <input id="in-weight" type="number" step="0.1" placeholder="体重(kg)" />
+          <input id="in-fat" type="number" step="0.1" placeholder="体脂(%)" />
+        </div>
+        <button class="btn" id="btn-add">录入今日数据</button>
+        <div class="records" id="records"></div>
+        <canvas id="chart"></canvas>
+      </div>
+    </section>
 
-const A = [
-    {n:"负重保加利亚分腿蹲", d:"4组x10次(每侧)。必须背负重物！撕裂腿部肌肉。"},
-    {n:"背包罗马尼亚硬拉", d:"4组x12次。感受大腿后侧拉伸，拉高基础代谢。"},
-    {n:"靠墙静蹲 (3组x60秒)", d:"对抗到大腿发抖，不要提早站起。"},
-    {n:"仰卧举腿 (4组x15次)", d:"慢放！利用下腹控制腿部重量，不借力。"}
-];
+    <section id="sec-weeks12" class="section">
+      <div class="section-title">🗓️ 12 周演进路线</div>
+      <div class="card">
+        <div class="week-grid">
+          <div class="week-card">
+            <div class="week-card-title">第 1-3 周 (重组期)</div>
+            <div>目标：体重降至 80kg，找回四肢充血感。</div>
+            <div>重点：熟练掌握居家壶铃/弹力带器械的发力感。</div>
+          </div>
+          <div class="week-card">
+            <div class="week-card-title">第 4-6 周 (突破期)</div>
+            <div>目标：体重降至 78kg，腰带往里扣一格。</div>
+            <div>重点：如果弹力带太轻，将其对折增加阻力；壶铃必须做到力竭。</div>
+          </div>
+          <div class="week-card">
+            <div class="week-card-title">第 7-9 周 (瓶颈期)</div>
+            <div>目标：体重降至 76.5kg。</div>
+            <div>重点：身体会极力对抗减重，严格控制晚餐碳水，提升周末壶铃摇摆的组数。</div>
+          </div>
+          <div class="week-card">
+            <div class="week-card-title">第 10-12 周 (成型期)</div>
+            <div>目标：锁定 75kg 目标，体脂 17%。</div>
+            <div>此时四肢围度保住，且下腹部脂肪明显剥离。</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-const B = [
-    {n:"宽/窄距俯卧撑", d:"4组 x 做到力竭起不来。撑大胸廓。"},
-    {n:"负重俯身划船", d:"4组x12次。提拉重物到小腹，增厚背阔肌。"},
-    {n:"Y-T-W 肌肉收缩", d:"3组x10遍。解决圆肩，让身姿挺拔拔高。"},
-    {n:"侧支撑 (4组x45秒)", d:"每侧坚持。强化腹斜肌，收紧侧腰围度。"}
-];
+  </div>
 
-const H = [
-    {n:"高强度壶铃/重物摇摆", d:"4组x30次。用臀部爆发力往前顶，纯粹的代谢炸弹。"},
-    {n:"登山者 (4组x45秒)", d:"组间休息仅15秒。极速榨干最后一点体力。"}
-];
+  <script>
+    // 导航切换
+    const tabs = document.querySelectorAll('.nav-tab');
+    const sections = document.querySelectorAll('.section');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+      });
+    });
 
-function today() { return new Date().toISOString().slice(0,10); }
+    // 自动填充今天日期
+    document.getElementById('in-date').valueAsDate = new Date();
 
-function render() {
-    const draw = (id, data) => {
-        document.getElementById(id).innerHTML = data.map(i => {
-            let key = "hc_" + today() + "_" + i.n;
-            let done = localStorage.getItem(key) == '1';
-            return `<div class="item ${done?'done':''}" onclick="toggle('${i.n}')">
-                <div class="check"></div><div class="info"><div class="n">${i.n}</div><div class="d">${i.d}</div></div>
-            </div>`;
-        }).join('');
-    };
-    draw('w', W); draw('s', plan === 'A' ? A : B); draw('h', H);
-    
-    let currentTasks = [...W, ...(plan === 'A' ? A : B), ...H];
-    let done = currentTasks.filter(i => localStorage.getItem("hc_" + today() + "_" + i.n) == '1').length;
-    document.getElementById('fill').style.width = (done/currentTasks.length*100) + '%';
-    
-    if(done === currentTasks.length && !localStorage.getItem("hc_comp_" + today())) {
-        localStorage.setItem("hc_comp_" + today(), "1");
-        alert("今日硬核训练完成！优质蛋白补充起来！");
+    // 力量打卡状态保存
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][data-key]');
+    checkboxes.forEach(cb => {
+      const key = 'home_pro_' + new Date().toISOString().slice(0,10) + '_' + cb.getAttribute('data-key');
+      if (localStorage.getItem(key) === '1') cb.checked = true;
+      cb.addEventListener('change', () => {
+        localStorage.setItem(key, cb.checked ? '1' : '0');
+      });
+    });
+
+    // 体重体脂系统
+    const KEY = 'home_pro_body_records';
+    const inDate = document.getElementById('in-date');
+    const inWeight = document.getElementById('in-weight');
+    const inFat = document.getElementById('in-fat');
+    const btnAdd = document.getElementById('btn-add');
+    const list = document.getElementById('records');
+    const canvas = document.getElementById('chart');
+    const ctx = canvas.getContext('2d');
+
+    function loadRecords() {
+      try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; }
     }
-    updateStat();
-}
+    function saveRecords(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
 
-function toggle(n) {
-    let key = "hc_" + today() + "_" + n;
-    localStorage.getItem(key) ? localStorage.removeItem(key) : localStorage.setItem(key, "1");
-    render();
-}
-
-function updateStat() {
-    let count = 0;
-    for(let i=0; i<7; i++) {
-        let d = new Date(); d.setDate(d.getDate() - i);
-        if(localStorage.getItem("hc_comp_" + d.toISOString().slice(0,10))) count++;
+    function renderTrack() {
+      const records = loadRecords().sort((a, b) => a.date.localeCompare(b.date));
+      list.innerHTML = '';
+      records.slice().reverse().forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'record-item';
+        div.innerHTML = `<span>${r.date.slice(5)}</span> <span>${r.weight} kg</span> <span style="color:#38bdf8">${r.fat}%</span> <span onclick="deleteRecord('${r.date}')" style="cursor:pointer; color:#ef4444;">×</span>`;
+        list.appendChild(div);
+      });
+      drawChart(records);
     }
-    document.getElementById("stat").innerText = "过去 7 天已完成 " + count + " 次高强度训练";
-}
 
-function setPlan(p) {
-    plan = p; localStorage.setItem('hc_plan', p);
-    document.getElementById('btnA').className = p === 'A' ? 'btn active' : 'btn';
-    document.getElementById('btnB').className = p === 'B' ? 'btn active' : 'btn';
-    render();
-}
+    window.deleteRecord = function(date) {
+      if(confirm('删除此条记录？')) {
+        saveRecords(loadRecords().filter(r => r.date !== date));
+        renderTrack();
+      }
+    }
 
-render();
-</script>
+    function drawChart(records) {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * 2; canvas.height = rect.height * 2;
+      ctx.scale(2, 2); ctx.clearRect(0, 0, rect.width, rect.height);
+
+      if (records.length < 2) {
+        ctx.fillStyle = '#6b7280'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('录入至少2天数据以生成趋势曲线', rect.width/2, rect.height/2); return;
+      }
+
+      const weights = records.map(r => Number(r.weight));
+      const fats = records.map(r => Number(r.fat));
+      
+      const minW = Math.min(...weights) - 1, maxW = Math.max(...weights) + 1;
+      const minF = Math.min(...fats) - 1, maxF = Math.max(...fats) + 1;
+      const pad = 20, w = rect.width - pad*2, h = rect.height - pad*2.5;
+
+      const getX = i => pad + (i / (records.length - 1)) * w;
+      const getY = (val, min, max) => pad + h - ((val - min) / (max - min)) * h;
+
+      const drawLine = (data, min, max, color) => {
+        ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.beginPath();
+        data.forEach((v, i) => i === 0 ? ctx.moveTo(getX(i), getY(v, min, max)) : ctx.lineTo(getX(i), getY(v, min, max)));
+        ctx.stroke();
+      };
+
+      // 绘制基准线
+      ctx.strokeStyle = '#1f2937'; ctx.lineWidth = 1; ctx.beginPath();
+      ctx.moveTo(pad, pad+h); ctx.lineTo(pad+w, pad+h); ctx.stroke();
+
+      drawLine(weights, minW, maxW, '#facc15'); // 黄线体重
+      drawLine(fats, minF, maxF, '#38bdf8'); // 蓝线体脂
+
+      ctx.fillStyle = '#9ca3af'; ctx.font = '10px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText(`体重: 黄线 (${weights[weights.length-1]}kg)`, pad, 12);
+      ctx.fillText(`体脂: 蓝线 (${fats[fats.length-1]}%)`, pad, 26);
+    }
+
+    btnAdd.addEventListener('click', () => {
+      if (!inDate.value || !inWeight.value || !inFat.value) return alert('请填全日期、体重和体脂！');
+      const records = loadRecords();
+      const idx = records.findIndex(r => r.date === inDate.value);
+      const data = { date: inDate.value, weight: inWeight.value, fat: inFat.value };
+      idx >= 0 ? records[idx] = data : records.push(data);
+      saveRecords(records); renderTrack();
+    });
+
+    // 延迟渲染图表防止尺寸计算错误
+    setTimeout(renderTrack, 100);
+  </script>
 </body>
 </html>
