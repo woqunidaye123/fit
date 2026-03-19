@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>91男神塑形手册</title>
+    <style>
+        :root { --bg:#000; --card:#1c1c1e; --green:#32d74b; --blue:#0a84ff; --text:#fff; --dim:#8e8e93; }
+        body { font-family:-apple-system; background:var(--bg); color:var(--text); padding:20px; margin:0; -webkit-user-select:none; }
+        .card { background:var(--card); border-radius:14px; padding:16px; margin-bottom:15px; }
+        h2 { color:var(--blue); font-size:0.9rem; margin-top:0; border-bottom:0.5px solid #333; padding-bottom:8px; display:flex; justify-content:space-between; }
+        .item { display:flex; align-items:center; padding:12px 0; border-bottom:0.5px solid #2c2c2e; }
+        .check { width:22px; height:22px; border:2px solid #555; border-radius:50%; margin-right:12px; flex-shrink:0; }
+        .done .check { background:var(--green); border-color:var(--green); position:relative; }
+        .done .check::after { content:'✓'; color:#000; position:absolute; left:4px; top:-1px; font-weight:bold; }
+        .info { flex:1; }
+        .n { font-size:1rem; font-weight:600; }
+        .d { font-size:0.75rem; color:var(--dim); margin-top:3px; }
+        .progress-box { margin-bottom:20px; text-align:center; }
+        .progress { height:8px; background:#333; border-radius:4px; overflow:hidden; margin:10px 0; }
+        #fill { height:100%; background:linear-gradient(90deg, var(--blue), var(--green)); width:0; transition:0.5s; }
+        .btn-group { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+        .btn { padding:12px; border:1px solid var(--blue); border-radius:10px; color:var(--blue); background:none; font-weight:600; }
+        .active { background:var(--blue); color:#fff; }
+    </style>
+</head>
+<body>
+
+<div class="progress-box">
+    <h1 style="font-size:1.3rem; margin:10px 0;">塑形精锐计划 PRO</h1>
+    <div id="stat" style="font-size:0.8rem; color:#aaa;">近7天进度统计中...</div>
+    <div class="progress"><div id="fill"></div></div>
+</div>
+
+<div class="btn-group">
+    <button class="btn active" id="btnA" onclick="setPlan('A')">A 下肢 & 下腹</button>
+    <button class="btn" id="btnB" onclick="setPlan('B')">B 上肢 & 侧腹</button>
+</div>
+
+<div class="card"><h2>第一步：激活 (解决腹大)</h2><div id="w"></div></div>
+<div class="card"><h2>第二步：力量 (保住四肢)</h2><div id="s"></div></div>
+<div class="card"><h2>第三步：燃脂 (内脏脂肪)</h2><div id="h"></div></div>
+
+<script>
+let plan = localStorage.getItem('last_plan') || 'A';
+const W = [
+    {n:"真空腹 (3组)", d:"空腹/练前必做：收缩腹部，缩小腰围"},
+    {n:"死虫式 (12次)", d:"矫正骨盆前倾：背部贴地，收紧核心"}
+];
+const A = [
+    {n:"负重分腿蹲", d:"3x10次：手拎重物，保住四肢肌肉量"},
+    {n:"仰卧举腿 (15次)", d:"针对下腹：消灭小肚腩的核心动作"}
+];
+const B = [
+    {n:"俯卧撑 (力竭)", d:"4组：撑起肩膀，视觉上腰更细"},
+    {n:"侧支撑 (45秒)", d:"收紧侧腹：勒紧你的天然腹带"}
+];
+const H = [
+    {n:"登山者 (45秒)", d:"HIIT：针对性燃烧内脏脂肪"}
+];
+
+function today() { return new Date().toISOString().slice(0,10); }
+
+function render() {
+    const draw = (id, data) => {
+        document.getElementById(id).innerHTML = data.map(i => {
+            let key = today() + "_" + i.n;
+            let done = localStorage.getItem(key) == '1';
+            return `<div class="item ${done?'done':''}" onclick="toggle('${i.n}')"><div class="check"></div><div class="info"><div class="n">${i.n}</div><div class="d">${i.d}</div></div></div>`;
+        }).join('');
+    };
+    draw('w', W); draw('s', plan === 'A' ? A : B); draw('h', H);
+    
+    let currentTasks = [...W, ...(plan === 'A' ? A : B), ...H];
+    let done = currentTasks.filter(i => localStorage.getItem(today() + "_" + i.n) == '1').length;
+    document.getElementById('fill').style.width = (done/currentTasks.length*100) + '%';
+    
+    if(done === currentTasks.length && !localStorage.getItem("comp_" + today())) {
+        localStorage.setItem("comp_" + today(), "1");
+        alert("🎉 今日达成！");
+    }
+    updateStat();
+}
+
+function toggle(n) {
+    let key = today() + "_" + n;
+    localStorage.getItem(key) ? localStorage.removeItem(key) : localStorage.setItem(key, "1");
+    render();
+}
+
+function updateStat() {
+    let count = 0;
+    for(let i=0; i<7; i++) {
+        let d = new Date(); d.setDate(d.getDate() - i);
+        if(localStorage.getItem("comp_" + d.toISOString().slice(0,10))) count++;
+    }
+    document.getElementById("stat").innerText = "🔥 过去7天完成：" + count + " 天";
+}
+
+function setPlan(p) {
+    plan = p; localStorage.setItem('last_plan', p);
+    document.getElementById('btnA').className = p === 'A' ? 'btn active' : 'btn';
+    document.getElementById('btnB').className = p === 'B' ? 'btn active' : 'btn';
+    render();
+}
+
+render();
+</script>
+</body>
+</html>
