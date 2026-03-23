@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>居家核心重塑</title>
+  <title>居家减脂训练</title>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <style>
@@ -12,7 +12,7 @@
       --bg: #050816; --bg-card: #020617;
       --text: #e5e7eb; --subtext: #9ca3af;
       --accent: #facc15; --accent-soft: rgba(250, 204, 21, 0.12);
-      --border: #1f2937;
+      --border: #1f2937; --blue: #38bdf8; --red: #f43f5e; --green: #10b981;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
@@ -54,9 +54,12 @@
     
     .day-list { display: flex; flex-direction: column; gap: 10px; }
     .day-item { padding: 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05); }
-    .day-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .day-sub { font-size: 11px; color: var(--subtext); line-height: 1.4; }
-    .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
+    .day-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .day-sub { font-size: 11px; color: var(--subtext); line-height: 1.5; margin-bottom: 4px; }
+    .tag-group { display: flex; gap: 4px; }
+    .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+    .tag.morn { background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
+    .tag.eve { background: rgba(244, 63, 94, 0.1); color: #f43f5e; }
     
     .task-list { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
     .task { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; padding: 6px 0; border-bottom: 1px dashed #1f2937; }
@@ -73,81 +76,100 @@
       width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border);
       background: #020617; color: var(--text); font-size: 12px; outline: none;
     }
-    .btn { padding: 10px; border-radius: 8px; border: none; font-size: 13px; font-weight: bold; background: var(--accent); color: #000; width: 100%; margin-bottom: 10px; }
+    .btn-group { display: flex; gap: 8px; margin-bottom: 12px; }
+    .btn-plan { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: #111827; color: var(--subtext); font-size: 12px; font-weight: bold; transition: 0.2s; }
+    .btn-plan.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    .btn-add { padding: 10px; border-radius: 8px; border: none; font-size: 13px; font-weight: bold; background: var(--accent); color: #000; width: 100%; margin-bottom: 10px; }
+    
     .records { max-height: 150px; overflow-y: auto; font-size: 11px; color: var(--subtext); }
     .record-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1f2937; }
     canvas { width: 100%; height: 180px; background: #020617; border-radius: 10px; margin-top: 10px; border: 1px solid var(--border); }
-    
-    .week-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; }
-    .week-card { border-radius: 10px; padding: 10px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); }
-    .week-card-title { font-weight: bold; margin-bottom: 6px; font-size: 12px; color: var(--accent); }
-    .week-card div { margin-bottom: 3px; color: var(--subtext); }
   </style>
 </head>
 <body>
   <div class="app">
     <header>
       <div class="title-block">
-        <div class="pill"><span class="pill-dot"></span>居家全能版 · 12 周重塑</div>
-        <h1>铁兵 · 82kg➔75kg 减脂增肌</h1>
-        <p>核心策略：壶铃/弹力带保肌肉 + HIIT 撕裂内脏脂肪</p>
+        <div class="pill"><span class="pill-dot"></span>早晚双轨 · 高阶降脂系统</div>
+        <h1>铁兵 · 82kg➔75kg 重塑计划</h1>
+        <p>核心策略：早间空腹刷脂 + 晚间居家力量保肌</p>
       </div>
       <div class="nav-tabs">
-        <button class="nav-tab active" data-target="sec-week">训练课表</button>
-        <button class="nav-tab" data-target="sec-strength">力量打卡</button>
-        <button class="nav-tab" data-target="sec-track">数据趋势</button>
-        <button class="nav-tab" data-target="sec-weeks12">总览</button>
+        <button class="nav-tab active" data-target="sec-week">早晚课表</button>
+        <button class="nav-tab" data-target="sec-strength">双轨打卡</button>
+        <button class="nav-tab" data-target="sec-track">体重趋势</button>
       </div>
     </header>
 
     <section id="sec-week" class="section active">
-      <div class="section-title">📅 每周固定节奏 (代谢拉满)</div>
+      <div class="section-title">📅 错峰拉满：一日两练排表</div>
       <div class="card">
         <div class="day-list">
-          <div class="day-item"><div class="day-title"><span>周一 · 力量 A + 腹部</span><span class="tag">下肢超载</span></div><div class="day-sub">壶铃深蹲/硬拉 + 举腿，迫使身体分泌睾酮。</div></div>
-          <div class="day-item"><div class="day-title"><span>周二 · 空腹有氧</span><span class="tag">刷脂</span></div><div class="day-sub">早起空腹爬楼梯/快走 30分钟，心率 130 左右。</div></div>
-          <div class="day-item"><div class="day-title"><span>周三 · 力量 B + 侧腹</span><span class="tag">上肢扩容</span></div><div class="day-sub">利用弹力带和自重，背部拉宽，胸部撑起。</div></div>
-          <div class="day-item"><div class="day-title"><span>周四 · 休息/拉伸</span><span class="tag">恢复</span></div><div class="day-sub">严禁熬夜。肌肉是在休息时生长的。</div></div>
-          <div class="day-item"><div class="day-title"><span>周五 · 力量 A (重复)</span><span class="tag">下肢强化</span></div><div class="day-sub">四肢细必须一周练两次腿，壶铃重量加满！</div></div>
-          <div class="day-item"><div class="day-title"><span>周六 · 力量 B (重复)</span><span class="tag">上肢强化</span></div><div class="day-sub">胸背二次刺激，保持肌肉充血感。</div></div>
-          <div class="day-item"><div class="day-title"><span>周日 · HIIT 极限冲刺</span><span class="tag">内脏杀手</span></div><div class="day-sub">20分钟壶铃摇摆/波比跳，制造24小时持续燃脂缺口。</div></div>
+          <div class="day-item">
+            <div class="day-title"><span>周一</span><div class="tag-group"><span class="tag morn">早: 楼梯</span><span class="tag eve">晚: 腿腹</span></div></div>
+            <div class="day-sub">【早】黑咖啡+爬17层(4-5趟)，坐电梯下。<br>【晚】壶铃保加利亚蹲+举腿。</div>
+          </div>
+          <div class="day-item">
+            <div class="day-title"><span>周二</span><div class="tag-group"><span class="tag morn">早: 楼梯</span><span class="tag eve">晚: 休息</span></div></div>
+            <div class="day-sub">【早】爬17层(6-8趟)，心率控制135。<br>【晚】彻底休息，拉伸放松。</div>
+          </div>
+          <div class="day-item">
+            <div class="day-title"><span>周三</span><div class="tag-group"><span class="tag morn">早: 补觉</span><span class="tag eve">晚: 胸背+摇摆</span></div></div>
+            <div class="day-sub">【早】多睡半小时，恢复神经。<br>【晚】弹力带划船/俯卧撑 + 4组壶铃摇摆。</div>
+          </div>
+          <div class="day-item">
+            <div class="day-title"><span>周四</span><div class="tag-group"><span class="tag morn">早: 晨跑</span><span class="tag eve">晚: 休息</span></div></div>
+            <div class="day-sub">【早】户外慢跑3km，换换心情微出汗。<br>【晚】彻底休息。</div>
+          </div>
+          <div class="day-item">
+            <div class="day-title"><span>周五</span><div class="tag-group"><span class="tag morn">早: 楼梯</span><span class="tag eve">晚: 腿腹</span></div></div>
+            <div class="day-sub">【早】爬17层(4-5趟)。<br>【晚】周末前把腿练透，榨干糖原。</div>
+          </div>
+          <div class="day-item">
+            <div class="day-title"><span>周六</span><div class="tag-group"><span class="tag morn">早: 休息</span><span class="tag eve">晚: 胸背</span></div></div>
+            <div class="day-sub">【早】睡到自然醒。<br>【晚】上肢雕刻，保持充血感。</div>
+          </div>
+          <div class="day-item">
+            <div class="day-title"><span>周日</span><div class="tag-group"><span class="tag morn">无氧冲刺</span><span class="tag eve">清理内脏脂肪</span></div></div>
+            <div class="day-sub">【时间自定】15分钟壶铃摇摆 + 波比跳。极限心率，制造24h后燃效应。</div>
+          </div>
         </div>
       </div>
     </section>
 
     <section id="sec-strength" class="section">
-      <div class="section-title">🏋️ 每日打卡 (做到力竭为止)</div>
-      <div class="card">
-        <div class="section-title" style="margin-top:0;font-size:14px;color:var(--accent);">
-          每日必做：深层核心激活
-        </div>
+      <div class="section-title">⏱️ 今日执行清单</div>
+      
+      <div class="card" style="margin-bottom: 12px; border-color: rgba(56, 189, 248, 0.3);">
+        <div class="section-title" style="margin-top:0;font-size:14px;color:var(--blue);">🌅 早间：空腹燃脂</div>
         <div class="task-list">
-          <label class="task"><input type="checkbox" data-key="core_vacuum" /><div class="task-info"><span class="task-name">真空腹训练 3组x30秒</span><span class="task-desc">空腹把肚脐死死贴向脊柱。专门对付“腹部前突”。</span></div></label>
-          <label class="task"><input type="checkbox" data-key="core_deadbug" /><div class="task-info"><span class="task-name">死虫式 3组x12次</span><span class="task-desc">腰椎死死压住地面，改善骨盆前倾。搭配弹力带增加阻力更佳。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="morn_coffee" /><div class="task-info"><span class="task-name">温水 / 黑咖啡起步</span><span class="task-desc">唤醒代谢，加速游离脂肪。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="morn_cardio" /><div class="task-info"><span class="task-name">17层楼梯 / 3km慢跑</span><span class="task-desc">楼梯只上不下（坐电梯下），全脚掌踩实，保护膝盖。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="morn_vacuum" /><div class="task-info"><span class="task-name">真空腹训练 3组x30秒</span><span class="task-desc">空腹时做效果最好。肚脐贴脊柱，收紧腹横肌。</span></div></label>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 12px; border-color: rgba(244, 63, 94, 0.3);">
+        <div class="section-title" style="margin-top:0;font-size:14px;color:var(--red); justify-content: space-between;">
+          <span>🌃 晚间：居家力量 (35分钟)</span>
         </div>
         
-        <hr style="border-color:#1f2937; margin:15px 0;">
-
-        <div class="section-title" style="margin-top:0;font-size:14px;color:#38bdf8;">
-          A 计划：下肢超载与下腹 (居家环境循环 4 轮)
+        <div class="btn-group">
+          <button class="btn-plan active" id="btn-plan-a" onclick="switchPlan('A')">A 下肢/下腹</button>
+          <button class="btn-plan" id="btn-plan-b" onclick="switchPlan('B')">B 上肢/侧腰</button>
         </div>
+
+        <div class="task-list" id="strength-tasks">
+          </div>
+      </div>
+
+      <div class="card" style="border-color: rgba(16, 185, 129, 0.3);">
+        <div class="section-title" style="margin-top:0;font-size:14px;color:var(--green);">🔋 神经恢复与补剂</div>
         <div class="task-list">
-          <label class="task"><input type="checkbox" data-key="A_bulgarian" /><div class="task-info"><span class="task-name">壶铃保加利亚分腿蹲 (每侧10次)</span><span class="task-desc">双手提壶铃或重物。后脚搭沙发，前脚主导发力。保大腿肌肉神作。</span></div></label>
-          <label class="task"><input type="checkbox" data-key="A_rdl" /><div class="task-info"><span class="task-name">壶铃/弹力带罗马尼亚硬拉 (12次)</span><span class="task-desc">双脚踩住弹力带或双手持壶铃，臀部拼命后撅，感受大腿后侧强烈拉伸。</span></div></label>
-          <label class="task"><input type="checkbox" data-key="A_wall" /><div class="task-info"><span class="task-name">靠墙静蹲 (60秒)</span><span class="task-desc">对抗到双腿发抖。大腿可以绑一根弹力圈对抗膝盖内扣。</span></div></label>
-          <label class="task"><input type="checkbox" data-key="A_legraise" /><div class="task-info"><span class="task-name">仰卧举腿 (15次)</span><span class="task-desc">慢下！利用下腹部力量抗衡重力，消灭下腹凸出。</span></div></label>
-        </div>
-
-        <hr style="border-color:#1f2937; margin:15px 0;">
-
-        <div class="section-title" style="margin-top:0;font-size:14px;color:#f43f5e;">
-          B 计划：上肢扩充与侧腰 (居家环境循环 4 轮)
-        </div>
-        <div class="task-list">
-          <label class="task"><input type="checkbox" data-key="B_pushup" /><div class="task-info"><span class="task-name">宽/窄距俯卧撑交替 (力竭)</span><span class="task-desc">觉得简单可以把弹力带绕在后背增加阻力。撑大胸廓。</span></div></label>
-          <label class="task"><input type="checkbox" data-key="B_row" /><div class="task-info"><span class="task-name">单臂壶铃/弹力带划船 (每侧12次)</span><span class="task-desc">单手提拉壶铃，或坐姿向后拉扯弹力带。背阔肌发力，增厚背部。</span></div></label>
-          <label class="task"><input type="checkbox" data-key="B_ytw" /><div class="task-info"><span class="task-name">Y-T-W 肌肉收缩 (10遍)</span><span class="task-desc">俯卧，徒手或手持两瓶矿泉水挤压背部。矫正圆肩，身姿挺拔显腰细。</span></div></label>
-          <label class="task"><input type="checkbox" data-key="B_sideplank" /><div class="task-info"><span class="task-name">侧支撑 Side Plank (每侧45秒)</span><span class="task-desc">像紧身衣一样勒紧腹斜肌，强制收缩侧腰围度。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="rec_vit" /><div class="task-info"><span class="task-name">复合维生/益生菌</span><span class="task-desc">早餐后服用。填补微量元素缺口，防高蛋白胀气。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="rec_fishoil" /><div class="task-info"><span class="task-name">高纯度鱼油 / D3</span><span class="task-desc">晚餐后服用。润滑关节，辅助代谢内脏脂肪。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="rec_carb" /><div class="task-info"><span class="task-name">练后快碳 (如半根香蕉)</span><span class="task-desc">压制皮质醇，开启副交感神经，防止第二天疲惫。</span></div></label>
+          <label class="task"><input type="checkbox" data-key="rec_sleep" /><div class="task-info"><span class="task-name">23:30 前躺下</span><span class="task-desc">不做熬夜伤肌的事情。睡前可做3分钟箱式深呼吸。</span></div></label>
         </div>
       </div>
     </section>
@@ -160,37 +182,9 @@
           <input id="in-weight" type="number" step="0.1" placeholder="体重(kg)" />
           <input id="in-fat" type="number" step="0.1" placeholder="体脂(%)" />
         </div>
-        <button class="btn" id="btn-add">录入今日数据</button>
+        <button class="btn-add" id="btn-add">录入今日数据</button>
         <div class="records" id="records"></div>
         <canvas id="chart"></canvas>
-      </div>
-    </section>
-
-    <section id="sec-weeks12" class="section">
-      <div class="section-title">🗓️ 12 周演进路线</div>
-      <div class="card">
-        <div class="week-grid">
-          <div class="week-card">
-            <div class="week-card-title">第 1-3 周 (重组期)</div>
-            <div>目标：体重降至 80kg，找回四肢充血感。</div>
-            <div>重点：熟练掌握居家壶铃/弹力带器械的发力感。</div>
-          </div>
-          <div class="week-card">
-            <div class="week-card-title">第 4-6 周 (突破期)</div>
-            <div>目标：体重降至 78kg，腰带往里扣一格。</div>
-            <div>重点：如果弹力带太轻，将其对折增加阻力；壶铃必须做到力竭。</div>
-          </div>
-          <div class="week-card">
-            <div class="week-card-title">第 7-9 周 (瓶颈期)</div>
-            <div>目标：体重降至 76.5kg。</div>
-            <div>重点：身体会极力对抗减重，严格控制晚餐碳水，提升周末壶铃摇摆的组数。</div>
-          </div>
-          <div class="week-card">
-            <div class="week-card-title">第 10-12 周 (成型期)</div>
-            <div>目标：锁定 75kg 目标，体脂 17%。</div>
-            <div>此时四肢围度保住，且下腹部脂肪明显剥离。</div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -209,21 +203,71 @@
       });
     });
 
-    // 自动填充今天日期
-    document.getElementById('in-date').valueAsDate = new Date();
+    // 力量计划数据
+    const planA = [
+      { key: "A_bulgarian", name: "壶铃保加利亚分腿蹲 (每侧10次)", desc: "后脚搭沙发，双手持重。保腿围王牌。" },
+      { key: "A_rdl", name: "壶铃/弹力带硬拉 (12次)", desc: "感受大腿后侧强烈拉伸，靠臀部顶直。" },
+      { key: "A_wall", name: "靠墙静蹲 (60秒)", desc: "对抗至双腿发抖。可加弹力圈防内扣。" },
+      { key: "A_legraise", name: "仰卧举腿 / 死虫式", desc: "慢下抗衡重力，消灭下腹凸出与骨盆前倾。" }
+    ];
+    
+    const planB = [
+      { key: "B_pushup", name: "宽/窄距俯卧撑交替 (力竭)", desc: "用弹力带绕后背加阻。宽距练胸厚，窄距练臂粗。" },
+      { key: "B_row", name: "壶铃/弹力带划船 (12次)", desc: "背部夹紧。背练宽了，视觉上腰就细了。" },
+      { key: "B_ytw", name: "Y-T-W 肌肉收缩 (10遍)", desc: "矫正圆肩，身姿拔高。" },
+      { key: "B_sideplank", name: "侧支撑 Side Plank (45秒)", desc: "像紧身衣一样勒紧腹斜肌，缩减侧腰围。" }
+    ];
 
-    // 力量打卡状态保存
-    const checkboxes = document.querySelectorAll('input[type="checkbox"][data-key]');
-    checkboxes.forEach(cb => {
-      const key = 'home_pro_' + new Date().toISOString().slice(0,10) + '_' + cb.getAttribute('data-key');
+    let currentPlan = localStorage.getItem('v3_plan') || 'A';
+
+    function renderTasks() {
+      const container = document.getElementById('strength-tasks');
+      const tasks = currentPlan === 'A' ? planA : planB;
+      const today = new Date().toISOString().slice(0,10);
+      
+      container.innerHTML = tasks.map(t => {
+        const fullKey = `v3_${today}_${t.key}`;
+        const isChecked = localStorage.getItem(fullKey) === '1' ? 'checked' : '';
+        return `<label class="task"><input type="checkbox" data-dyn-key="${t.key}" ${isChecked} /><div class="task-info"><span class="task-name">${t.name}</span><span class="task-desc">${t.desc}</span></div></label>`;
+      }).join('');
+
+      // 绑定动态复选框事件
+      container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const key = `v3_${today}_${e.target.getAttribute('data-dyn-key')}`;
+          localStorage.setItem(key, e.target.checked ? '1' : '0');
+        });
+      });
+    }
+
+    window.switchPlan = function(p) {
+      currentPlan = p;
+      localStorage.setItem('v3_plan', p);
+      document.getElementById('btn-plan-a').className = p === 'A' ? 'btn-plan active' : 'btn-plan';
+      document.getElementById('btn-plan-b').className = p === 'B' ? 'btn-plan active' : 'btn-plan';
+      renderTasks();
+    };
+
+    // 初始化力量计划
+    document.getElementById('btn-plan-a').className = currentPlan === 'A' ? 'btn-plan active' : 'btn-plan';
+    document.getElementById('btn-plan-b').className = currentPlan === 'B' ? 'btn-plan active' : 'btn-plan';
+    renderTasks();
+
+    // 静态复选框状态保存 (早间 & 恢复)
+    const staticCheckboxes = document.querySelectorAll('input[type="checkbox"][data-key]');
+    staticCheckboxes.forEach(cb => {
+      const key = 'v3_' + new Date().toISOString().slice(0,10) + '_' + cb.getAttribute('data-key');
       if (localStorage.getItem(key) === '1') cb.checked = true;
       cb.addEventListener('change', () => {
         localStorage.setItem(key, cb.checked ? '1' : '0');
       });
     });
 
+    // 自动填充今天日期
+    document.getElementById('in-date').valueAsDate = new Date();
+
     // 体重体脂系统
-    const KEY = 'home_pro_body_records';
+    const KEY = 'v3_body_records';
     const inDate = document.getElementById('in-date');
     const inWeight = document.getElementById('in-weight');
     const inFat = document.getElementById('in-fat');
@@ -282,12 +326,11 @@
         ctx.stroke();
       };
 
-      // 绘制基准线
       ctx.strokeStyle = '#1f2937'; ctx.lineWidth = 1; ctx.beginPath();
       ctx.moveTo(pad, pad+h); ctx.lineTo(pad+w, pad+h); ctx.stroke();
 
-      drawLine(weights, minW, maxW, '#facc15'); // 黄线体重
-      drawLine(fats, minF, maxF, '#38bdf8'); // 蓝线体脂
+      drawLine(weights, minW, maxW, '#facc15'); 
+      drawLine(fats, minF, maxF, '#38bdf8'); 
 
       ctx.fillStyle = '#9ca3af'; ctx.font = '10px sans-serif'; ctx.textAlign = 'left';
       ctx.fillText(`体重: 黄线 (${weights[weights.length-1]}kg)`, pad, 12);
@@ -303,7 +346,6 @@
       saveRecords(records); renderTrack();
     });
 
-    // 延迟渲染图表防止尺寸计算错误
     setTimeout(renderTrack, 100);
   </script>
 </body>
